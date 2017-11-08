@@ -27,7 +27,7 @@ MAINTAINER Hawkular Metrics <hawkular-dev@lists.jboss.org>
 
 #
 ENV HAWKULAR_METRICS_ENDPOINT_PORT="8080" \
-    HAWKULAR_METRICS_VERSION="0.28.1.Final" \
+    HAWKULAR_METRICS_VERSION="0.29.0-SNAPSHOT" \
     HAWKULAR_METRICS_DIRECTORY="/opt/hawkular" \
     HAWKULAR_METRICS_SCRIPT_DIRECTORY="/opt/hawkular/scripts/" \
     PATH=$PATH:$HAWKULAR_METRICS_SCRIPT_DIRECTORY \
@@ -42,8 +42,9 @@ RUN cd $JBOSS_HOME/bin && \
 COPY prometheus.yaml $JBOSS_HOME/standalone/configuration/prometheus.yaml
 
 # Get and copy the hawkular metrics war to the deployment directory
-RUN cd $JBOSS_HOME/standalone/deployments/ && \
-    curl -Lo hawkular-metrics.ear https://origin-repository.jboss.org/nexus/service/local/artifact/maven/content?r=public\&g=org.hawkular.metrics\&a=hawkular-metrics-openshift-dist\&e=ear\&v=${HAWKULAR_METRICS_VERSION}
+COPY /home/miburman/projects/git/hawkular-metrics/dist/containers/hawkular-metrics-openshift-dist/target/hawkular-metrics-openshift-dist-0.29.0-SNAPSHOT.ear $JBOSS_HOME/standalone/deployments/
+#RUN cd $JBOSS_HOME/standalone/deployments/ && \
+#    curl -Lo hawkular-metrics.ear https://origin-repository.jboss.org/nexus/service/local/artifact/maven/content?r=public\&g=org.hawkular.metrics\&a=hawkular-metrics-openshift-dist\&e=ear\&v=${HAWKULAR_METRICS_VERSION}
 
 # Add in the JGroups Kubernetes clustering module
 RUN mkdir -p $JBOSS_HOME/modules/system/layers/base/org/jgroups/kubernetes/main && \
@@ -85,7 +86,7 @@ USER root
 RUN yum -y install openssl epel-release \
     && yum -y install python-pip \
     && yum clean all \
-    && pip install --no-cache-dir 'hawkular-client==0.5.2'
+    && pip install --no-cache-dir 'hawkular-client==0.5.3'
 
 # Change the permissions so that the user running the image can start up Hawkular Metrics
 RUN chmod -R 777 /opt

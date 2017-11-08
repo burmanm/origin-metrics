@@ -38,6 +38,12 @@ ENV GOROOT=/opt/golang/go
 
 # Solve performance regression in Heapster 1.3.0, see BZ1465532
 COPY BZ1465532.patch /tmp/
+COPY 0002-Allow-disabling-the-initial-caching-of-metric-defini.patch /tmp/
+COPY 0003-Update-Hawkular-Metrics-driver.patch /tmp/
+COPY 0004-Instead-of-storing-a-struct-in-the-memory-store-only.patch /tmp/
+COPY 0005-hash-updates.patch /tmp/
+COPY 0006-Create-hash-in-the-same-process-as-definition-modeli.patch /tmp/
+COPY 0007-Use-new-Openshift-endpoint-that-fetches-all-the-cach.patch /tmp/
 
 RUN yum install -y -q go git wget make patch && \
     yum clean all && \
@@ -50,6 +56,12 @@ RUN yum install -y -q go git wget make patch && \
     cd heapster && \
     git checkout $HEAPSTER_COMMIT && \
     git apply /tmp/BZ1465532.patch && \
+    git apply /tmp/0002-Allow-disabling-the-initial-caching-of-metric-defini.patch && \
+    git apply /tmp/0003-Update-Hawkular-Metrics-driver.patch && \
+    git apply /tmp/0004-Instead-of-storing-a-struct-in-the-memory-store-only.patch && \
+    git apply /tmp/0005-hash-updates.patch && \
+    git apply /tmp/0006-Create-hash-in-the-same-process-as-definition-modeli.patch && \
+    git apply /tmp/0007-Use-new-Openshift-endpoint-that-fetches-all-the-cach.patch && \
     make && \
     cp heapster /opt && \
     rm -rf $GOPATH && \
